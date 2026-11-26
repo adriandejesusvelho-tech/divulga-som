@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DIVULGA SOUND</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#00ff66">
+  <style>
+    :root { --bg: #0a0a0a; --card: #161618; --input: #202024; --neon: #00ff66; --text: #f4f4f5; --muted: #a1a1aa; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 60px; }
+    header { background: #111113; border-bottom: 1px solid #27272a; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: 1px; cursor: pointer; }
+    .logo span { color: var(--neon); }
+    .menu-btn { background: none; border: none; color: var(--neon); font-size: 1.8rem; cursor: pointer; }
+    nav { display: none; flex-direction: column; background: #141416; padding: 15px 20px; border-bottom: 1px solid var(--neon); gap: 12px; }
+    nav.open { display: flex; }
+    nav a, nav button { color: var(--text); text-decoration: none; background: none; border: none; text-align: left; font-size: 1rem; cursor: pointer; padding: 4px 0; }
+    nav a:hover, nav button:hover { color: var(--neon); }
+    .btn-neon { background: var(--neon); color: #000; font-weight: 700; border: none; padding: 11px 16px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; text-align: center; }
+    .btn-neon:hover { filter: brightness(1.1); }
+    .container { max-width: 1100px; margin: 25px auto; padding: 0 15px; }
+    h2 { border-left: 4px solid var(--neon); padding-left: 10px; margin: 30px 0 18px; font-size: 1.3rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+    .card { background: var(--card); border: 1px solid #27272a; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.6); transition: 0.25s; display: flex; flex-direction: column; }
+    .card:hover { transform: translateY(-4px); border-color: var(--neon); }
+    .card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+    .card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+    .card-title { font-size: 1.05rem; font-weight: 700; }
+    .box-form { background: var(--card); padding: 22px; border-radius: 10px; border: 1px solid #27272a; max-width: 520px; margin: 20px auto; }
+    input, textarea { width: 100%; padding: 12px; margin: 6px 0 14px; background: var(--input); border: 1px solid #3f3f46; color: #fff; border-radius: 6px; }
+    input:focus, textarea:focus { outline: none; border-color: var(--neon); }
+    .hidden { display: none !important; }
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
+    .pendente { background: #ca8a04; } .aprovado { background: #16a34a; } .recusado { background: #dc2626; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div style="display:flex; align-items:center; gap:15px;">
+      <button class="menu-btn" id="btn-menu">☰</button>
+      <div class="logo" onclick="mostrarTela('tela-home')">DIVULGA <span>SOUND</span></div>
+    </div>
+    <button id="btn-install" class="btn-neon hidden" style="padding: 8px 12px; font-size: 0.8rem;">INSTALAR APLICATIVO</button>
+  </header>
+
+  <nav id="main-nav">
+    <button onclick="mostrarTela('tela-home')">Início</button>
+    <button class="auth-only hidden" onclick="mostrarTela('tela-envio-flyer')">Enviar Flyer</button>
+    <button class="auth-only hidden" onclick="mostrarTela('tela-envio-mf')">Divulgar Mega Funk</button>
+    <button class="auth-only hidden" onclick="mostrarTela('tela-minhas')">Minhas Submissões</button>
+    <button id="nav-login" onclick="mostrarTela('tela-auth')">Entrar / Cadastrar</button>
+    <a href="admin.html" id="nav-admin" class="hidden" style="color: var(--neon); font-weight: bold;">⚙ Administração</a>
+    <button id="nav-logout" class="auth-only hidden" style="color: #ef4444;">Sair</button>
+  </nav>
+
+  <section id="tela-auth" class="container hidden">
+    <div class="box-form">
+      <h2>Entrar ou Cadastrar</h2>
+      <input type="email" id="auth-email" placeholder="Seu e-mail">
+      <input type="password" id="auth-pass" placeholder="Sua senha (mínimo 6 caracteres)">
+      <div style="display:flex; gap:10px;">
+        <button class="btn-neon" id="btn-login" style="flex:1;">Entrar</button>
+        <button class="btn-neon" id="btn-register" style="flex:1; background:#27272a; color:#fff;">Cadastrar</button>
+      </div>
+      <button id="btn-reset" style="background:none; border:none; color:var(--neon); margin-top:12px; cursor:pointer; font-size:0.85rem;">Esqueci minha senha</button>
+    </div>
+  </section>
+
+  <section id="tela-envio-flyer" class="container hidden">
+    <div class="box-form">
+      <h2>Enviar Flyer de Evento</h2>
+      <form id="form-flyer">
+        <input type="text" id="f-titulo" placeholder="Título do Evento *" required>
+        <input type="text" id="f-festa" placeholder="Nome da Festa *" required>
+        <input type="date" id="f-data" required>
+        <input type="time" id="f-hora" required>
+        <input type="text" id="f-endereco" placeholder="Endereço / Local *" required>
+        <input type="text" id="f-cidade" placeholder="Cidade *" required>
+        <input type="text" id="f-org" placeholder="Organizador *" required>
+        <input type="text" id="f-insta" placeholder="Instagram (@perfil)">
+        <input type="tel" id="f-whats" placeholder="WhatsApp (Ex: 5548999999999)">
+        <input type="url" id="f-ingresso" placeholder="Link de Ingressos (https://...)">
+        <textarea id="f-desc" rows="3" placeholder="Descrição e informações adicionais..."></textarea>
+        <label style="font-size:0.85rem; color:var(--muted);">Imagem do Flyer (máx 5MB) *:</label>
+        <input type="file" id="f-img" accept="image/*" required>
+        <button type="submit" class="btn-neon" style="width:100%;" id="btn-sub-flyer">ENVIAR FLYER</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="tela-envio-mf" class="container hidden">
+    <div class="box-form">
+      <h2>Divulgar Mega Funk (YouTube)</h2>
+      <form id="form-mf">
+        <input type="text" id="mf-titulo" placeholder="Título do Mega Funk *" required>
+        <input type="text" id="mf-dj" placeholder="Nome artístico do DJ *" required>
+        <input type="text" id="mf-feats" placeholder="DJs participantes (opcional)">
+        <input type="text" id="mf-canal" placeholder="Nome do canal no YouTube *" required>
+        <input type="url" id="mf-url" placeholder="Link do YouTube (https://youtube.com...) *" required>
+        <textarea id="mf-desc" rows="3" placeholder="Descrição..." required></textarea>
+        <label style="font-size:0.85rem; color:var(--muted);">Imagem de Capa (máx 5MB) *:</label>
+        <input type="file" id="mf-img" accept="image/*" required>
+        <button type="submit" class="btn-neon" style="width:100%;" id="btn-sub-mf">ENVIAR MEGA FUNK</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="tela-minhas" class="container hidden">
+    <h2>Meus Flyers Enviados</h2>
+    <div id="minhas-flyers" class="grid"></div>
+    <h2>Meus Mega Funks Enviados</h2>
+    <div id="minhas-mf" class="grid"></div>
+  </section>
+
+  <section id="tela-detalhe" class="container hidden">
+    <button class="btn-neon" onclick="mostrarTela('tela-home')" style="background:#27272a; color:#fff; margin-bottom:20px;">← Voltar</button>
+    <div id="conteudo-detalhe"></div>
+  </section>
+
+  <main id="tela-home" class="container">
+    <input type="text" id="busca" placeholder="🔍 Pesquisar eventos, cidades ou DJs de Mega Funk...">
+    <h2>Flyers em Destaque</h2>
+    <div id="grid-flyers" class="grid">Carregando flyers...</div>
+    <h2>Mega Funk YouTube</h2>
+    <div id="grid-mf" class="grid">Carregando Mega Funks...</div>
+  </main>
+
+  <script type="module">
+    import { auth, db, SUPER_ADMIN_EMAIL, uploadImagemImgBB } from './firebase-config.js';
+    import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://gstatic.com";
+    import { collection, addDoc, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } from "https://gstatic.com";
+
+    let userAtual = null;
+
+    document.getElementById('btn-menu').onclick = () => document.getElementById('main-nav').classList.toggle('open');
+    window.mostrarTela = (id) => {
+      ['tela-home', 'tela-auth', 'tela-envio-flyer', 'tela-envio-mf', 'tela-minhas', 'tela-detalhe'].forEach(t => document.getElementById(t).classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+      document.getElementById('main-nav').classList.remove('open');
+      if (id === 'tela-minhas') carregarMinhas();
+    };
+
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault(); deferredPrompt = e;
+      const btn = document.getElementById('btn-install');
+      btn.classList.remove('hidden');
+      btn.onclick = () => { deferredPrompt.prompt(); deferredPrompt = null; btn.classList.add('hidden'); };
+    });
+
+    document.getElementById('btn-register').onclick = async () => {
+      const email = document.getElementById('auth-email').value.trim();
+      const pass = document.getElementById('auth-pass').value;
+      try {
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+alert("Conta criada com sucesso!");
+        mostrarTela('tela-home');
+      } catch (e) { alert("Erro: " + e.message); }
+    };
+
+    document.getElementById('btn-login').onclick = async () => {
+      try {
+        await signInWithEmailAndPassword(auth, document.getElementById('auth-email').value.trim(), document.getElementById('auth-pass').value);
+        mostrarTela('tela-home');
+      } catch (e) { alert("Erro: " + e.message); }
+    };
+
+    document.getElementById('btn-reset').onclick = async () => {
+      const email = prompt("Digite seu e-mail para recuperar a senha:");
+      if (email) { await sendPasswordResetEmail(auth, email); alert("Link enviado para o seu e-mail!"); }
+    };
+
+    document.getElementById('nav-logout').onclick = () => { signOut(auth); mostrarTela('tela-home'); };
+
+    onAuthStateChanged(auth, async (user) => {
+      userAtual = user;
+      document.querySelectorAll('.auth-only').forEach(el => el.classList.toggle('hidden', !user));
+      document.getElementById('nav-login').classList.toggle('hidden', !!user);
+      const navAdmin = document.getElementById('nav-admin');
+      navAdmin.classList.add('hidden');
+
+      if (user) {
+        const convite = await getDoc(doc(db, "adminInvitations", user.email));
+        if (user.email === SUPER_ADMIN_EMAIL || (convite.exists() && convite.data().ativo)) {
+          navAdmin.classList.remove('hidden');
+        }
+      }
+    });
+
+    document.getElementById('form-flyer').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-sub-flyer');
+      btn.disabled = true; btn.textContent = "ENVIANDO...";
+      try {
+        const imageUrl = await uploadImagemImgBB(document.getElementById('f-img').files[0]);
+        await addDoc(collection(db, "flyers"), {
+          titulo: document.getElementById('f-titulo').value.trim(),
+          festa: document.getElementById('f-festa').value.trim(),
+          dataEvento: document.getElementById('f-data').value,
+          horario: document.getElementById('f-hora').value,
+          endereco: document.getElementById('f-endereco').value.trim(),
+          cidade: document.getElementById('f-cidade').value.trim(),
+          organizador: document.getElementById('f-org').value.trim(),
+          instagram: document.getElementById('f-insta').value.trim(),
+          whatsapp: document.getElementById('f-whats').value.trim(),
+          ingresso: document.getElementById('f-ingresso').value.trim(),
+          descricao: document.getElementById('f-desc').value.trim(),
+          imageUrl, autorId: userAtual.uid, autorEmail: userAtual.email, status: "pendente", createdAt: serverTimestamp()
+        });
+        alert("Flyer enviado para aprovação!");
+        e.target.reset();
+        mostrarTela('tela-minhas');
+      } catch (err) { alert(err.message); }
+      finally { btn.disabled = false; btn.textContent = "ENVIAR FLYER"; }
+    };
+
+    document.getElementById('form-mf').onsubmit = async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-sub-mf');
+      btn.disabled = true; btn.textContent = "ENVIANDO...";
+      try {
+        const coverUrl = await uploadImagemImgBB(document.getElementById('mf-img').files[0]);
+        await addDoc(collection(db, "megaFunk"), {
+          titulo: document.getElementById('mf-titulo').value.trim(),
+          dj: document.getElementById('mf-dj').value.trim(),
+          feats: document.getElementById('mf-feats').value.trim(),
+          canal: document.getElementById('mf-canal').value.trim(),
+          youtubeUrl: document.getElementById('mf-url').value.trim(),
+          descricao: document.getElementById('mf-desc').value.trim(),
+          coverUrl, autorId: userAtual.uid, autorEmail: userAtual.email, status: "pendente", createdAt: serverTimestamp()
+        });
+        alert("Mega Funk enviado para aprovação!");
+        e.target.reset();
+        mostrarTela('tela-minhas');
+      } catch (err) { alert(err.message); }
+      finally { btn.disabled = false; btn.textContent = "ENVIAR MEGA FUNK"; }
+    };
+
+    async function carregarCatalogo() {
+      const snapF = await getDocs(query(collection(db, "flyers"), where("status", "==", "aprovado")));
+      const gridF = document.getElementById('grid-flyers');
+      gridF.innerHTML = snapF.empty ? "Nenhum flyer publicado ainda." : "";
+      snapF.forEach(d => {
+        const f = d.data();
+        gridF.innerHTML += `
+          <div class="card item-busca" data-texto="${(f.titulo + ' ' + f.cidade).toLowerCase()}">
+            <img src="${f.imageUrl}" loading="lazy">
+            <div class="card-body">
+              <div class="card-title">${f.titulo}</div>
+              <button class="btn-neon" onclick="verDetalhes('${d.id}')">VER INFORMAÇÕES</button>
+            </div>
+          </div>`;
+      });
+
+      const snapM = await getDocs(query(collection(db, "megaFunk"), where("status", "==", "aprovado")));
+      const gridM = document.getElementById('grid-mf');
+      gridM.innerHTML = snapM.empty ? "Nenhum Mega Funk publicado ainda." : "";
+      snapM.forEach(d => {
+        const m = d.data();
+        gridM.innerHTML += `
+          <div class="card item-busca" data-texto="${(m.titulo + ' ' + m.dj).toLowerCase()}">
+            <img src="${m.coverUrl}" loading="lazy">
+            <div class="card-body">
+              <div>
+                <div class="card-title">${m.titulo}</div>
+                <p style="font-size:0.85rem; color:var(--muted); margin:5px 0;">DJ ${m.dj} ${m.feats ? '• ' + m.feats : ''}</p>
+                <p style="font-size:0.8rem; color:#ccc;">${m.descricao}</p>
+              </div>
+              <a href="${m.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="btn-neon">ASSISTIR NO YOUTUBE</a>
+            </div>
+          </div>`;
+      });
+    }
+
+    window.verDetalhes = async (id) => {
+      const snap = await getDoc(doc(db, "flyers", id));
+      if (!snap.exists()) return;
+      const f = snap.data();
+      document.getElementById('conteudo-detalhe').innerHTML = `
+        <div class="box-form" style="max-width:750px;">
+          <img src="${f.imageUrl}" style="width:100%; border-radius:8px; margin-bottom:15px;">
+          <h2 style="margin-top:0;">${f.titulo}</h2>
+          <p style="margin-bottom:12px;">${f.descricao}</p>
+          <p><strong>Festa:</strong> ${f.festa}</p>
+          <p><strong>Data e Hora:</strong> ${f.dataEvento} às ${f.horario}</p>
+          <p><strong>Local:</strong> ${f.endereco} - ${f.cidade}</p>
+          <p><strong>Organizador:</strong> ${f.organizador}</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;">
+            ${f.ingresso ? `<a href="${f.ingresso}" target="_blank" class="btn-neon">INGRESSOS</a>` : ''}
+            ${f.whatsapp ? `<a href="https://wa.me{f.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn-neon" style="background:#25d366;">WHATSAPP</a>` : ''}
+            ${f.instagram ? `<a href="https://instagram.com{f.instagram.replace('@','')}" target="_blank" class="btn-neon" style="background:#27272a; color:#fff;">INSTAGRAM</a>` : ''}
+          </div>
+        </div>`;
+      mostrarTela('tela-detalhe');
+    };
+
+    document.getElementById('busca').oninput = (e) => {
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.item-busca').forEach(el => el.style.display = el.dataset.texto.includes(q) ? 'flex' : 'none');
+    };
+
+    async function carregarMinhas() {
+      if (!userAtual) return;
+      const snapF = await getDocs(query(collection(db, "flyers"), where("autorId", "==", userAtual.uid)));
+      document.getElementById('minhas-flyers').innerHTML = snapF.docs.map(d => {
+        const f = d.data();
+        return `<div class="card"><img src="${f.imageUrl}"><div class="card-body"><div class="card-title">${f.titulo}</div><span class="badge ${f.status}">${f.status.toUpperCase()}</span>${f.motivoRecusa ? `<p style="font-size:0.8rem; color:#f87171;">${f.motivoRecusa}</p>` : ''}</div></div>`;
+      }).join('') || "Nenhum envio.";
+
+      const snapM = await getDocs(query(collection(db, "megaFunk"), where("autorId", "==", userAtual.uid)));
+      document.getElementById('minhas-mf').innerHTML = snapM.docs.map(d => {
+        const m = d.data();
+        return `<div class="card"><img src="${m.coverUrl}"><div class="card-body"><div class="card-title">${m.titulo}</div><span class="badge ${m.status}">${m.status.toUpperCase()}</span>${m.motivoRecusa ? `<p style="font-size:0.8rem; color:#f87171;">${m.motivoRecusa}</p>` : ''}</div></div>`;
+      }).join('') || "Nenhum envio.";
+    }
+
+    carregarCatalogo();
+  </script>
+</body>
+</html>
