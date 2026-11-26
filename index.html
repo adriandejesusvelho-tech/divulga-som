@@ -127,11 +127,11 @@
     <h2>Mega Funk YouTube</h2>
     <div id="grid-mf" class="grid">Carregando Mega Funks...</div>
   </main>
-
   <script type="module">
-    import { auth, db, SUPER_ADMIN_EMAIL, uploadImagemImgBB } from './firebase-config.js';
-    import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://gstatic.com";
-    import { collection, addDoc, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } from "https://gstatic.com";
+    const base = "https://gstatic.com";
+    const { auth, db, SUPER_ADMIN_EMAIL, uploadImagemImgBB } = await import('./firebase-config.js');
+    const { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } = await import(base + "firebase-auth.js");
+    const { collection, addDoc, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } = await import(base + "firebase-firestore.js");
 
     let userAtual = null;
 
@@ -157,7 +157,8 @@
       const pass = document.getElementById('auth-pass').value;
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
-alert("Conta criada com sucesso!");
+        await setDoc(doc(db, "users", cred.user.uid), { email, role: "user", status: "ativo", createdAt: serverTimestamp() });
+        alert("Conta criada com sucesso!");
         mostrarTela('tela-home');
       } catch (e) { alert("Erro: " + e.message); }
     };
@@ -310,15 +311,3 @@ alert("Conta criada com sucesso!");
         const f = d.data();
         return `<div class="card"><img src="${f.imageUrl}"><div class="card-body"><div class="card-title">${f.titulo}</div><span class="badge ${f.status}">${f.status.toUpperCase()}</span>${f.motivoRecusa ? `<p style="font-size:0.8rem; color:#f87171;">${f.motivoRecusa}</p>` : ''}</div></div>`;
       }).join('') || "Nenhum envio.";
-
-      const snapM = await getDocs(query(collection(db, "megaFunk"), where("autorId", "==", userAtual.uid)));
-      document.getElementById('minhas-mf').innerHTML = snapM.docs.map(d => {
-        const m = d.data();
-        return `<div class="card"><img src="${m.coverUrl}"><div class="card-body"><div class="card-title">${m.titulo}</div><span class="badge ${m.status}">${m.status.toUpperCase()}</span>${m.motivoRecusa ? `<p style="font-size:0.8rem; color:#f87171;">${m.motivoRecusa}</p>` : ''}</div></div>`;
-      }).join('') || "Nenhum envio.";
-    }
-
-    carregarCatalogo();
-  </script>
-</body>
-</html>
