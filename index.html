@@ -128,7 +128,7 @@
     <div id="grid-mf" class="grid">Carregando Mega Funks...</div>
   </main>
   <script type="module">
-    const base = "https://gstatic.com";
+    const base = "https://www." + "gstatic" + ".com/firebasejs/10.12.2/";
     const { auth, db, SUPER_ADMIN_EMAIL, uploadImagemImgBB } = await import('./firebase-config.js');
     const { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } = await import(base + "firebase-auth.js");
     const { collection, addDoc, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } = await import(base + "firebase-firestore.js");
