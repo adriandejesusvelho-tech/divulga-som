@@ -1,7 +1,9 @@
-const CDN = "https://gstatic.com";
-import { initializeApp } from "https://gstatic.comfirebase-app.js";
-import { getAuth } from "https://gstatic.comfirebase-auth.js";
-import { getFirestore } from "https://gstatic.comfirebase-firestore.js";
+const fVer = "10.12.2";
+const fBase = `https://gstatic.com{fVer}/`;
+
+const { initializeApp } = await import(fBase + "firebase-app.js");
+const { getAuth } = await import(fBase + "firebase-auth.js");
+const { getFirestore } = await import(fBase + "firebase-firestore.js");
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX4SEp17uvZ1NWdjFMDEYDcUmExvSTyZM",
@@ -27,13 +29,12 @@ export async function uploadImagemImgBB(file) {
   const formData = new FormData();
   formData.append("image", file);
 
-  const apiUrl = "https://imgbb.com" + IMGBB_API_KEY;
-  const res = await fetch(apiUrl, {
+  const res = await fetch(`https://imgbb.com{IMGBB_API_KEY}`, {
     method: "POST",
     body: formData
   });
 
   const data = await res.json();
-  if (!data.success) throw new Error("Falha ao enviar imagem para o servidor.");
+  if (!data.success) throw new Error("Falha ao enviar imagem.");
   return data.data.url;
 }
