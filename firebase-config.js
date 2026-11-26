@@ -1,13 +1,12 @@
-const fVer = "10.12.2";
-const fBase = `https://gstatic.com{fVer}/`;
+const host = "https://www." + "gstatic" + ".com/firebasejs/10.12.2/";
 
-const { initializeApp } = await import(fBase + "firebase-app.js");
-const { getAuth } = await import(fBase + "firebase-auth.js");
-const { getFirestore } = await import(fBase + "firebase-firestore.js");
+const { initializeApp } = await import(host + "firebase-app.js");
+const { getAuth } = await import(host + "firebase-auth.js");
+const { getFirestore } = await import(host + "firebase-firestore.js");
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX4SEp17uvZ1NWdjFMDEYDcUmExvSTyZM",
-  authDomain: "://firebaseapp.com",
+  authDomain: "divulga-sound-cc7b1." + "firebaseapp" + ".com",
   projectId: "divulga-sound-cc7b1",
   storageBucket: "divulga-sound-cc7b1.firebasestorage.app",
   messagingSenderId: "594085286109",
@@ -29,7 +28,8 @@ export async function uploadImagemImgBB(file) {
   const formData = new FormData();
   formData.append("image", file);
 
-  const res = await fetch(`https://imgbb.com{IMGBB_API_KEY}`, {
+  const apiUrl = "https://api." + "imgbb" + ".com/1/upload?key=" + IMGBB_API_KEY;
+  const res = await fetch(apiUrl, {
     method: "POST",
     body: formData
   });
