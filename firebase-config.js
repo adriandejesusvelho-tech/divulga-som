@@ -1,6 +1,7 @@
-import { initializeApp } from "https://gstatic.com";
-import { getAuth } from "https://gstatic.com";
-import { getFirestore } from "https://gstatic.com";
+const CDN = "https://gstatic.com";
+import { initializeApp } from "https://gstatic.comfirebase-app.js";
+import { getAuth } from "https://gstatic.comfirebase-auth.js";
+import { getFirestore } from "https://gstatic.comfirebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDX4SEp17uvZ1NWdjFMDEYDcUmExvSTyZM",
@@ -26,7 +27,8 @@ export async function uploadImagemImgBB(file) {
   const formData = new FormData();
   formData.append("image", file);
 
-  const res = await fetch(`https://imgbb.com{IMGBB_API_KEY}`, {
+  const apiUrl = "https://imgbb.com" + IMGBB_API_KEY;
+  const res = await fetch(apiUrl, {
     method: "POST",
     body: formData
   });
